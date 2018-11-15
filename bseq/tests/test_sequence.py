@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Nose tests for Sequence and its subclasses.
 """
-from bseq.sequence import Sequence, CodonSequence
+from bseq.sequence import Sequence, NuclSequence, CodonSequence
 
 
 class TestSequence:
@@ -53,6 +53,35 @@ class TestSequence:
 
     def test_str(self):
         assert str(self.seq) == 'ATGCATGCATGCAAA'
+
+
+class TestNuclSequence:
+    def setup(self):
+        self.seq = NuclSequence('test', 'ATGCATGCATGCAAA')
+    
+    def test_len(self):
+        assert len(self.seq) == 15
+
+    def test_getitem(self):
+        assert self.seq[0] == 'A'
+        assert self.seq[1] == 'T'
+        assert self.seq[4] == 'A'
+        assert self.seq[-1] == 'A'
+
+        assert self.seq[0:1] == 'A'
+        assert self.seq[0:2] == 'AT'
+        assert self.seq[3:4] == 'C'
+        assert self.seq[3:] == 'CATGCATGCAAA'
+        assert self.seq[-2:] == 'AA'
+        assert self.seq[-4:-1] == 'CAA'
+
+    def test_contains(self):
+        assert 'ATGCAT' in self.seq
+        assert 'ATGCATGCATGCAAA' in self.seq
+        assert 'ATGCGG' not in self.seq
+
+    def test_str(self):
+        assert str(self.seq) == 'ATGCATGCATGCAAA', print(str(self.seq))
 
 
 class TestCodonSequence:
