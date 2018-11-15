@@ -21,7 +21,8 @@ and add in the sequences automatically.
 from collections import namedtuple
 from copy import deepcopy
 import numpy as np
-from bseq.sequence import Sequence, NuclSequence, ProtSequence, CodonSequence
+from bseq.sequence import Sequence, NuclSequence, CodonSequence
+from bseq.marker import Marker
 from bseq.formatter import fasta_formatted_string
 
 
