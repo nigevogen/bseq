@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Nose tests for Sequence and its subclasses.
 """
-from bseq.sequence import Sequence, NuclSequence, CodonSequence
+from bseq.sequence import Sequence, NuclSequence, ProtSequence, CodonSequence
 
 
 class TestSequence:
@@ -127,7 +127,7 @@ class TestProtSequence:
     ProtSequence is a subclass of Sequence.
     """
     def setup(self):
-        self.seq = NuclSequence('test', 'VCWMMYDCGVVEIDC')
+        self.seq = ProtSequence('test', 'VCWMMYDCGVVEIDC')
     
     def test_len(self):
         assert len(self.seq) == 15
