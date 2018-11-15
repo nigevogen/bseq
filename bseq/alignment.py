@@ -25,6 +25,10 @@ from bseq.sequence import Sequence, NuclSequence, ProtSequence, CodonSequence
 from bseq.formatter import fasta_formatted_string
 
 
+SequenceAnnotation = namedtuple('SequenceAnnotation',
+                                'name, description, seq_type')
+
+
 class Alignment(object):
     """Represents an alignment of biological sequences.
 

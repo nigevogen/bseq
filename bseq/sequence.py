@@ -17,13 +17,9 @@ nucleotide sequences, ProtSequence for protein/amino acid sequences,
 and CodonSequence for coding sequences.
 
 """
-from collections import namedtuple
 import numpy as np
 from bseq.formatter import fasta_formatted_string
 
-
-SequenceAnnotation = namedtuple('SequenceAnnotation',
-                                'name, description, seq_type')
 
 class Sequence(object):
     """Represents a biological sequence of characters.
