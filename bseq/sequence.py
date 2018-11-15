@@ -109,6 +109,22 @@ class Sequence(object):
                                       description=self.description,
                                       line_width=line_width)
 
+    def count(self, char):
+        """Counts the number of time a given character occurs in the sequence.
+
+        Parameters
+        ----------
+        char : str
+            Character to count in the sequence
+
+        Returns
+        -------
+        int
+            Number of occurrences in the sequence
+
+        """
+        return self._sequence.count(char)
+
     def __len__(self):
         return len(self._sequence)
 
