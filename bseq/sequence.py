@@ -253,6 +253,34 @@ class CodonSequence(Sequence):
         super().__init__(name, sequence, description=description,
                          seq_type='codon')
 
+    def count_codon(self, codon):
+        """Counts the number of times a given codon occurs in the sequence.
+
+        Parameters
+        ----------
+        codon : str
+            Codon to count in the sequence
+
+        Returns
+        -------
+        int
+            Number of occurrences in the sequence
+
+        """
+        return sum([1 for c in self if c == codon])
+
+    def count_codon_all(self):
+        """Counts the number of times each character occurs in the sequence.
+
+        Returns
+        -------
+        Counter
+            Keys are the characters present in the sequence and
+            values are the corresponding number of occurrences in the sequence
+
+        """
+        return Counter(list(self))
+
     def __len__(self):
         return int(len(self._sequence) / 3)
 
