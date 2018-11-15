@@ -2,11 +2,12 @@
 """Helper functions for reading files.
 """
 from bseq.sequence import NuclSequence, ProtSequence, CodonSequence
+from bseq.alignment import NuclAlignment, ProtAlignment, CodonAlignment
 
 
 def read_fasta_file(path, seq_type='nucleotide'):
     """Reads the FASTA file and stores the contents
-    as a list of Sequence objects
+    as a list of Sequence objects.
 
     Parameters
     ----------
@@ -62,3 +63,34 @@ def read_fasta_file(path, seq_type='nucleotide'):
                                     or "codon".')
             sequence_list.append(seq_obj)
     return sequence_list
+
+def read_fasta_alignment(path, seq_type='nucleotide',
+                         name=None, description=None):
+    """Reads the FASTA alignment and stores the contents
+    as an Alignment object.
+
+    Parameters
+    ----------
+    path : str
+        Path to the FASTA file.
+    seq_type : str, optional
+        Type of sequence expected. Choices are 'nucleotide',
+        'protein', or 'codon'.
+
+    Returns
+    -------
+    Alignment
+
+    """
+    alignment = None
+    if seq_type == 'nucleotide':
+        alignment = NuclAlignment(name, description)
+    elif seq_type == 'protein':
+        alignment = ProtAlignment(name, description)
+    elif seq_type == 'codon':
+        alignment = CodonAlignment(name, description)
+
+    for seq_obj in read_fasta_file(path, seq_type=seq_type):
+        alignment.add_sequence_obj(seq_obj)
+
+    return alignment
