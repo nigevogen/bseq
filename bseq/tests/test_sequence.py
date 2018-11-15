@@ -5,6 +5,8 @@ from bseq.sequence import Sequence, NuclSequence, CodonSequence
 
 
 class TestSequence:
+    """Unit tests for Sequence.
+    """
     def setup(self):
         self.seq = Sequence('test', 'ATGCATGCATGCAAA')
 
@@ -56,6 +58,10 @@ class TestSequence:
 
 
 class TestNuclSequence:
+    """Unit test for NuclSequence.
+
+    NuclSequence is a subclass of Sequence.
+    """
     def setup(self):
         self.seq = NuclSequence('test', 'ATGCATGCATGCAAA')
     
@@ -83,8 +89,44 @@ class TestNuclSequence:
     def test_str(self):
         assert str(self.seq) == 'ATGCATGCATGCAAA', print(str(self.seq))
 
+class TestProtSequence:
+    """Unit test for ProtSequence.
+
+    ProtSequence is a subclass of Sequence.
+    """
+    def setup(self):
+        self.seq = NuclSequence('test', 'VCWMMYDCGVVEIDC')
+    
+    def test_len(self):
+        assert len(self.seq) == 15
+
+    def test_getitem(self):
+        assert self.seq[0] == 'V'
+        assert self.seq[1] == 'C'
+        assert self.seq[4] == 'M'
+        assert self.seq[-1] == 'C'
+
+        assert self.seq[0:1] == 'V'
+        assert self.seq[0:2] == 'VC'
+        assert self.seq[3:4] == 'M'
+        assert self.seq[3:] == 'MMYDCGVVEIDC'
+        assert self.seq[-2:] == 'DC'
+        assert self.seq[-4:-1] == 'EID'
+
+    def test_contains(self):
+        assert 'VCWMMY' in self.seq
+        assert 'VCWMMYDCGVVEIDC' in self.seq
+        assert 'VCWMQY' not in self.seq
+
+    def test_str(self):
+        assert str(self.seq) == 'VCWMMYDCGVVEIDC', print(str(self.seq))
+
 
 class TestCodonSequence:
+    """Unit test for CodonSequence.
+
+    CodonSequence is a subclass of Sequence.
+    """
     def setup(self):
         self.seq = CodonSequence('test', 'ATGCATGCATGCAAA')
 

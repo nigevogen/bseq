@@ -17,6 +17,7 @@ nucleotide sequences, ProtSequence for protein/amino acid sequences,
 and CodonSequence for coding sequences.
 
 """
+from collections import Counter
 import numpy as np
 from bseq.formatter import fasta_formatted_string
 
@@ -108,6 +109,34 @@ class Sequence(object):
         return fasta_formatted_string(self.name, self._sequence,
                                       description=self.description,
                                       line_width=line_width)
+
+    def count(self, char):
+        """Counts the number of times a given character occurs in the sequence.
+
+        Parameters
+        ----------
+        char : str
+            Character to count in the sequence
+
+        Returns
+        -------
+        int
+            Number of occurrences in the sequence
+
+        """
+        return self._sequence.count(char)
+
+    def count_all(self):
+        """Counts the number of times each character occurs in the sequence.
+
+        Returns
+        -------
+        Counter
+            Keys are the characters present in the sequence and
+            values are the corresponding number of occurrences in the sequence
+
+        """
+        return Counter(self._sequence)
 
     def __len__(self):
         return len(self._sequence)
@@ -223,6 +252,34 @@ class CodonSequence(Sequence):
     def __init__(self, name, sequence, description=None):
         super().__init__(name, sequence, description=description,
                          seq_type='codon')
+
+    def count_codon(self, codon):
+        """Counts the number of times a given codon occurs in the sequence.
+
+        Parameters
+        ----------
+        codon : str
+            Codon to count in the sequence
+
+        Returns
+        -------
+        int
+            Number of occurrences in the sequence
+
+        """
+        return sum([1 for c in self if c == codon])
+
+    def count_codon_all(self):
+        """Counts the number of times each character occurs in the sequence.
+
+        Returns
+        -------
+        Counter
+            Keys are the characters present in the sequence and
+            values are the corresponding number of occurrences in the sequence
+
+        """
+        return Counter(list(self))
 
     def __len__(self):
         return int(len(self._sequence) / 3)
