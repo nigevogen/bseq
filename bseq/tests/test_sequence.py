@@ -211,3 +211,19 @@ class TestCodonSequence:
 
     def test_str(self):
         assert str(self.seq) == 'ATG CAT GCA TGC AAA', print(str(self.seq))
+
+    def test_count_codon(self):
+        assert self.seq.count_codon('ATG') == 1
+        assert self.seq.count_codon('CAT') == 1
+        assert self.seq.count_codon('GCA') == 1
+        assert self.seq.count_codon('TGC') == 1
+        assert self.seq.count_codon('AAA') == 1
+
+    def test_count_codon_all(self):
+        counter = self.seq.count_codon_all()
+        assert len(counter.keys()) == 5
+        assert counter['ATG'] == 1
+        assert counter['CAT'] == 1
+        assert counter['GCA'] == 1
+        assert counter['TGC'] == 1
+        assert counter['AAA'] == 1
