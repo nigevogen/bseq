@@ -28,36 +28,37 @@ def read_fasta_file(path, seq_type='nucleotide'):
     with open(path, 'r') as f:
         for line in f.readlines():
             if line.startswith('>'):
-                if not seq:
+                if seq:
                     seq_string = ''.join(seq)
                     seq_obj = None
                     if seq_type == 'nucleotide':
                         seq_obj = NuclSequence(name, seq_string, description)
-                    elif seq_string == 'protein':
+                    elif seq_type == 'protein':
                         seq_obj = ProtSequence(name, seq_string, description)
-                    elif seq_string == 'codon':
+                    elif seq_type == 'codon':
                         seq_obj = CodonSequence(name, seq_string, description)
                     else:
                         raise ValueError('seq_type must be \
                                           "nucleotide", "protein", \
                                           or "codon".')
                     sequence_list.append(seq_obj)
+                    seq = []
                 name, description = line[1:].rstrip().split(' ', 1)
-                seq = []
             else:
                 seq += [line.rstrip()]
 
-        if not seq:
+        if seq:
             seq_string = ''.join(seq)
             seq_obj = None
             if seq_type == 'nucleotide':
                 seq_obj = NuclSequence(name, seq_string, description)
-            elif seq_string == 'protein':
+            elif seq_type == 'protein':
                 seq_obj = ProtSequence(name, seq_string, description)
-            elif seq_string == 'codon':
+            elif seq_type == 'codon':
                 seq_obj = CodonSequence(name, seq_string, description)
             else:
                 raise ValueError('seq_type must be \
                                     "nucleotide", "protein", \
                                     or "codon".')
+            sequence_list.append(seq_obj)
     return sequence_list
