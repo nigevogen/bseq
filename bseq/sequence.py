@@ -216,7 +216,8 @@ class CodonSequence(Sequence):
     Unlike the base class Sequence, length-related values of CodonSequence are
     counted by the number of codons and not by the number of nucleotides in the
     sequence. This means that for a sequence `s` of 10 codons or 30 nucleotides,
-    `len(s)` returns 10 instead of 30. Similarly, indexing is via codon and notby nucleotide position.
+    `len(s)` returns 10 instead of 30. Similarly, indexing is via codon
+    and notby nucleotide position.
 
     """
     def __init__(self, name, sequence, description=None):

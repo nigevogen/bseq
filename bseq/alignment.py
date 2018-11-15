@@ -9,7 +9,7 @@ characters in the same alignment column are evolutionary related to
 each other. Similar to the Sequence object, an Alignment has a name
 to identify the alignment, a sequence type to identify what king of
 biological sequence is in the alignment, and optionally, a description
-that contains related information regarding the alignment. 
+that contains related information regarding the alignment.
 
 The sequences in the Alignment object are not added at the time of
 creating the object. Instead, sequences are added one by one through a
