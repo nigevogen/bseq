@@ -56,6 +56,22 @@ class TestSequence:
     def test_str(self):
         assert str(self.seq) == 'ATGCATGCATGCAAA'
 
+    def test_count(self):
+        assert self.seq.count('A') == 6
+        assert self.seq.count('T') == 3
+        assert self.seq.count('C') == 3
+        assert self.seq.count('G') == 3
+
+    def test_count_all(self):
+        counter = self.seq.count_all()
+        assert len(
+            set(counter.keys()).symmetric_difference(set(list('ATCG')))
+        ) == 0
+        assert counter['A'] == 6
+        assert counter['T'] == 3
+        assert counter['C'] == 3
+        assert counter['G'] == 3
+
 
 class TestNuclSequence:
     """Unit test for NuclSequence.
@@ -89,6 +105,22 @@ class TestNuclSequence:
     def test_str(self):
         assert str(self.seq) == 'ATGCATGCATGCAAA', print(str(self.seq))
 
+    def test_count(self):
+        assert self.seq.count('A') == 6
+        assert self.seq.count('T') == 3
+        assert self.seq.count('C') == 3
+        assert self.seq.count('G') == 3
+
+    def test_count_all(self):
+        counter = self.seq.count_all()
+        assert len(
+            set(counter.keys()).symmetric_difference(set(list('ATCG')))
+        ) == 0
+        assert counter['A'] == 6
+        assert counter['T'] == 3
+        assert counter['C'] == 3
+        assert counter['G'] == 3
+
 class TestProtSequence:
     """Unit test for ProtSequence.
 
@@ -121,6 +153,32 @@ class TestProtSequence:
     def test_str(self):
         assert str(self.seq) == 'VCWMMYDCGVVEIDC', print(str(self.seq))
 
+    def test_count(self):
+        assert self.seq.count('V') == 3
+        assert self.seq.count('C') == 3
+        assert self.seq.count('W') == 1
+        assert self.seq.count('M') == 2
+        assert self.seq.count('Y') == 1
+        assert self.seq.count('D') == 2
+        assert self.seq.count('G') == 1
+        assert self.seq.count('E') == 1
+        assert self.seq.count('I') == 1
+
+
+    def test_count_all(self):
+        counter = self.seq.count_all()
+        assert len(
+            set(counter.keys()).symmetric_difference(set(list('VCWMYDGEI')))
+        ) == 0
+        assert counter['V'] == 3
+        assert counter['C'] == 3
+        assert counter['W'] == 1
+        assert counter['M'] == 2
+        assert counter['Y'] == 1
+        assert counter['D'] == 2
+        assert counter['G'] == 1
+        assert counter['E'] == 1
+        assert counter['I'] == 1
 
 class TestCodonSequence:
     """Unit test for CodonSequence.
