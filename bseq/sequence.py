@@ -17,6 +17,7 @@ nucleotide sequences, ProtSequence for protein/amino acid sequences,
 and CodonSequence for coding sequences.
 
 """
+from collections import Counter
 import numpy as np
 from bseq.formatter import fasta_formatted_string
 
@@ -110,7 +111,7 @@ class Sequence(object):
                                       line_width=line_width)
 
     def count(self, char):
-        """Counts the number of time a given character occurs in the sequence.
+        """Counts the number of times a given character occurs in the sequence.
 
         Parameters
         ----------
@@ -124,6 +125,18 @@ class Sequence(object):
 
         """
         return self._sequence.count(char)
+
+    def count_all(self):
+        """Counts the number of times each character occurs in the sequence.
+
+        Returns
+        -------
+        Counter
+            Keys are the characters present in the sequence and
+            values are the corresponding number of occurrences in the sequence
+
+        """
+        return Counter(self._sequence)
 
     def __len__(self):
         return len(self._sequence)
