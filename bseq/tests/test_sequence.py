@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Nose tests for Sequence and its subclasses.
+"""
 from bseq.sequence import Sequence, CodonSequence
 
 

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Nose tests for Alignment and its subclasses.
+"""
 from bseq.sequence import NuclSequence
 from bseq.alignment import Alignment
 
