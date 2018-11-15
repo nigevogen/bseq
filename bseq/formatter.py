@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Helper functions for formatting files.
+"""
 def fasta_formatted_string(name, sequence, description=None, line_width=None):
     """Returns the name and character sequence in the FASTA format.
 
