@@ -4,6 +4,7 @@
 from bseq.sequence import NuclSequence
 from bseq.alignment import Alignment
 from bseq.marker import Marker
+import numpy as np
 
 
 class TestAlignmentEmpty:
@@ -49,3 +50,10 @@ class TestAlignment:
 
     def test_len(self):
         assert len(self.aln) == 15
+
+    def test_getitem(self):
+        assert list(self.aln[0]) == list('AAAA')
+        assert list(self.aln[0:1]) == list('AAAA')
+        assert list(map(list, self.aln[0:2])) == [['A', 'T'], ['A', 'T'],
+                                                  ['A', 'T'], ['A', 'T']]
+        assert list(self.aln['seq2']) == list('ATGTATGCATGCAAA')
