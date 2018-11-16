@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Nose tests for Alignment and its subclasses.
 """
-from bseq.marker import Marker
+from bseq.marker import Marker, ConsAlignMarker
 
 
 class TestMarker:
@@ -46,3 +46,30 @@ class TestMarker:
         assert self.marker.mask(sequence, 'O') == '___C______CCC__'
         assert self.marker.mask(sequence, 'X', mask_char='.') == \
         'ATT.AATATA...AT'
+
+class TestConsAlignMarker:
+    def setup(self):
+        self.marker = ConsAlignMarker('CCCNCCCCCCNNNCC')
+        self.sequence = 'ATTCAATATACCCAT'
+
+    def test_consistent_sites(self):
+        assert self.marker.consistent_sites(self.sequence) == 'ATTAATATAAT'
+
+    def test_inconsistent_sites(self):
+        assert self.marker.inconsistent_sites(self.sequence) == 'CCCC'
+
+    def test_mask_consistent_sites(self):
+        assert self.marker.mask_consistent_sites(self.sequence) == \
+        '___C______CCC__'
+
+    def test_mask_inconsistent_sites(self):
+        assert self.marker.mask_inconsistent_sites(self.sequence) == \
+        'ATT_AATATA___AT'
+
+    def test_consistent_site_coords(self):
+        assert self.marker.consistent_site_coords() == \
+        [0, 1, 2, 4, 5, 6, 7, 8, 9, 13, 14]
+
+    def test_inconsistent_site_coords(self):
+        assert self.marker.inconsistent_site_coords() == \
+        [3, 10, 11, 12]
