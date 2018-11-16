@@ -144,7 +144,6 @@ class Marker(object):
         for c in exclude_chars:
             coords += self.coords(c, inverse=True, explicit=True)
         coords = sorted(set(coords))
-        print(coords)
         if output_coords:
             return list(coords)
         return ''.join(seq_array[coords])
@@ -171,10 +170,11 @@ class Marker(object):
 
         """
         assert len(sequence) == len(self)
-        seq_array = np.array(sequence)
-        coords = sorted(
-            set([self.coords(c, inverse=False) for c in exclude_chars])
-        )
+        seq_array = np.array(list(sequence))
+        coords = []
+        for c in exclude_chars:
+            coords += self.coords(c, inverse=False, explicit=True)
+        coords = sorted(set(coords))
         seq_array[coords] = mask_char
         return ''.join(seq_array)
 
