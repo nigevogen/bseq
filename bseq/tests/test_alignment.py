@@ -3,6 +3,7 @@
 """
 from bseq.sequence import NuclSequence
 from bseq.alignment import Alignment
+from bseq.marker import Marker
 
 
 class TestAlignmentEmpty:
@@ -24,6 +25,17 @@ class TestAlignmentEmpty:
 
     def test_len(self):
         assert len(self.aln) == 0  # pylint: disable=C1801
+
+    def test_add_markers(self):
+        # Add two sequence, polymorphic on 4th site
+        self.aln.add_sequence('test1', 'ATGCATGCATGCAAA', 'nucleotide')
+        self.aln.add_sequence('test2', 'ATGGATGCATGCAAA', 'nucleotide')
+        self.aln.add_markers(
+            Marker('test_marker', {'O':'conserved', 'X':'polymorphic'},
+                   'OOOXOOOOOOOOOOO')
+        )
+        assert len(self.aln.markers) == 1
+        assert 'test_marker' in self.aln.markers.keys()
 
 
 class TestAlignment:
