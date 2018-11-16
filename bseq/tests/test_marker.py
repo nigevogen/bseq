@@ -35,10 +35,18 @@ class TestMarker:
         sequence = 'ATTCAATATACCCAT'
         assert self.marker.filter(sequence, 'X') == 'ATTAATATAAT'
         assert self.marker.filter(sequence, 'O') == 'CCCC'
+        assert self.marker.filter(sequence, 'X', inverse=True) == 'CCCC'
+        assert self.marker.filter(sequence, 'O', inverse=True) == 'ATTAATATAAT'
         assert self.marker.filter(sequence, 'X', output_coords=True) == \
             [0, 1, 2, 4, 5, 6, 7, 8, 9, 13, 14]
         assert self.marker.filter(sequence, 'O', output_coords=True) == \
             [3, 10, 11, 12]
+        assert self.marker.filter(sequence, 'X', output_coords=True,
+                                  inverse=True) == \
+            [3, 10, 11, 12]
+        assert self.marker.filter(sequence, 'O', output_coords=True,
+                                  inverse=True) == \
+            [0, 1, 2, 4, 5, 6, 7, 8, 9, 13, 14]
 
     def test_mask(self):
         sequence = 'ATTCAATATACCCAT'
