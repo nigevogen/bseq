@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bseq",
-    version="1.0.0",
+    version="1.0.1",
     author="Kent Kawashima",
     author_email="kentkawashima@nig.ac.jp",
     description="Python package for handling biological sequences and alignments",
@@ -18,5 +18,9 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Bio-Informatics"
+    ],
+    install_requires=[
+        'numpy',
+        'nose',
     ],
 )
