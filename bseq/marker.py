@@ -71,8 +71,12 @@ class Marker(object):
         the marker is C. The encoding 0C10N11C20 is equal to
         CCCCCCCCCCNCCCCCCCCC
         """
-        return ''.join(zip(list(map(str, (i[0] for i in self._pos_list))),
-                           self._char_list)) + str(self._pos_list[-1][-1])
+        num_list = list(map(str, (tup[0] for tup in self._pos_list)))
+        combined_list = [None] * (len(num_list) + len(self._char_list))
+        combined_list[::2] = num_list
+        combined_list[1::2] = self._char_list
+        last = str(self._pos_list[-1][-1])
+        return ''.join(list(map(str, combined_list))) + last
 
     def coords(self, char, inverse=False, explicit=True):
         """Returns the all the positions of the target character, or the all the
@@ -107,7 +111,7 @@ class Marker(object):
                 if explicit:
                     coords_list += list(range(*pos_tup))
                 else:
-                    coords_list.append(pos_tup)
+                    coords_list.append(list(pos_tup))
         return coords_list
 
     def filter(self, sequence, *exclude_chars, output_coords=False):
@@ -210,13 +214,11 @@ class Marker(object):
         """
         pos_list = []
         char_list = []
-        last = 0
         for i, c in enumerate(sequence):
             if not char_list or char_list[-1] != c:
                 pos_list.append(i)
                 char_list.append(c)
-                last = 1
-        pos_list.append(last+1)
+        pos_list.append(len(sequence))
         self._pos_list = tuple(
             (pos_list[i], pos_list[i+1]) for i in range(len(pos_list)-1)
         )
