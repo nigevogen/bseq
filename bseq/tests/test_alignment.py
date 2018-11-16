@@ -2,7 +2,9 @@
 """Nose tests for Alignment and its subclasses.
 """
 from bseq.sequence import NuclSequence
-from bseq.alignment import Alignment
+from bseq.alignment import Alignment, CodonAlignment
+from bseq.marker import Marker
+import numpy as np
 
 
 class TestAlignmentEmpty:
@@ -25,6 +27,18 @@ class TestAlignmentEmpty:
     def test_len(self):
         assert len(self.aln) == 0  # pylint: disable=C1801
 
+    def test_add_markers(self):
+        # Add two sequence, polymorphic on 4th site
+        self.aln.add_sequence('test1', 'ATGCATGCATGCAAA', 'nucleotide')
+        self.aln.add_sequence('test2', 'ATGGATGCATGCAAA', 'nucleotide')
+        self.aln.add_markers(
+            Marker('test_marker', {'O':'conserved', 'X':'polymorphic'},
+                   'OOOXOOOOOOOOOOO')
+        )
+        assert len(self.aln.markers) == 1
+        assert 'test_marker' in self.aln.markers.keys()
+        assert self.aln.markers['test_marker'].sequence == 'OOOXOOOOOOOOOOO'
+
 
 class TestAlignment:
     def setup(self):
@@ -36,3 +50,31 @@ class TestAlignment:
 
     def test_len(self):
         assert len(self.aln) == 15
+
+    def test_getitem(self):
+        assert list(self.aln[0]) == list('AAAA')
+        assert list(self.aln[0:1]) == list('AAAA')
+        assert list(map(list, self.aln[0:2])) == [['A', 'T'], ['A', 'T'],
+                                                  ['A', 'T'], ['A', 'T']]
+        assert list(self.aln['seq2']) == list('ATGTATGCATGCAAA')
+
+
+class TestCodonAlignment:
+    def setup(self):
+        self.aln = CodonAlignment('test')
+        self.aln.add_sequence('seq1', 'ATGCATGCATGCAAA', 'codon')
+        self.aln.add_sequence('seq2', 'ATGTATGCATGCAAA', 'codon')
+        self.aln.add_sequence('seq3', 'ATGCATGCATGCATA', 'codon')
+        self.aln.add_sequence('seq4', 'ATGCATGCATGCAAG', 'codon')
+
+    def test_len(self):
+        assert len(self.aln) == 5
+
+    def test_getitem(self):
+        assert list(map(lambda x: ''.join(x), self.aln[0])) == \
+        ['ATG', 'ATG', 'ATG', 'ATG']
+        assert list(map(lambda x: ''.join(x), self.aln[0:1]))  == \
+        ['ATG', 'ATG', 'ATG', 'ATG']
+        assert list(map(lambda x: ''.join(x), self.aln[0:2])) == \
+        ['ATGCAT', 'ATGTAT', 'ATGCAT', 'ATGCAT']
+        assert list(self.aln['seq2']) == list('ATGTATGCATGCAAA')

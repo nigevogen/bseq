@@ -81,7 +81,7 @@ class Alignment(object):
         self._records = []  # list of SequenceAnnotation objects
         self._records_lookup_d = dict()
         self._aln_matrix = np.array([])
-        self.filters = dict()
+        self.markers = dict()
 
     @property
     def sequences(self):
@@ -159,15 +159,37 @@ class Alignment(object):
                        description=description, seq_type=seq_type)
         self.add_sequence_obj(seq)
 
-    def filter_sites(self, *filter_names, exclude_char='X'):
+    def add_markers(self, *marker_objs):
+        """Adds a marker sequence to the alignment
+
+        Parameters
+        ----------
+        marker_objs : list of Marker objects
+
+        Returns
+        -------
+        int
+            Number of Marker objects added to the alignment.
+
+        """
+        cnt = 0
+        for marker_obj in marker_objs:
+            name = marker_obj.name
+            if name in self.markers.keys():
+                raise Exception('Marker with the same name already exists.')
+            self.markers[name] = marker_obj
+            cnt += 1
+        return cnt
+
+    def filter_sites(self, *marker_names, exclude_char='X'):
         """Filters out sites in the alignmnet using a given list of filters.
 
-        Assumes that all filter tracks use the same excluding character to mark
+        Assumes that all markers use the same excluding character to mark
         sites. The default excluding character is "X".
 
         Parameters
         ----------
-        filter_names: str or Filter object
+        marker_names: str or Filter object
             Names of registered filters or Filter objects to be used
             to filter the alignment.
         exclude_char : str
@@ -187,18 +209,24 @@ class Alignment(object):
 
         """
         keep_coords = set(range(self._aln_matrix.shape[0]))
-        for filt in filter_names:
+        for marker in marker_names:
             coords = set()
-            if isinstance(filt, str) and filt in self.filters.keys():
-                coords = set(self.filters[filt].coords(
+            if isinstance(marker, str) and marker in self.markers.keys():
+                coords = set(self.markers[marker].coords(
                     exclude_char, inverse=True))
-            elif isinstance(filt, Marker):
-                coords = set(filt.coords(exclude_char, inverse=True))
+            elif isinstance(marker, Marker):
+                coords = set(marker.coords(exclude_char, inverse=True))
             else:
                 raise ValueError()
             keep_coords = keep_coords.intersection(coords)
         new_aln = deepcopy(self)
         new_aln._aln_matrix = self._aln_matrix[:, coords]  # pylint: disable=protected-access
+        # Filter markers
+        for name, marker in new_aln.markers.items():
+            new_marker_sequence = ''.join(
+                np.array(list(marker.sequence))[coords]
+            )
+            new_aln.markers[name]._encode(new_marker_sequence)  # pylint: disable=protected-access
         return new_aln
 
     def filter_sequences(self, *sequence_names):
@@ -261,7 +289,7 @@ class Alignment(object):
         filter_sequences
 
         """
-        return self.filter_sites(*list(self.filters.keys()),
+        return self.filter_sites(*list(self.markers.keys()),
                                  exclude_char=exclude_char)
 
     def fasta_format(self, line_width=None):
@@ -613,7 +641,7 @@ class CodonAlignment(Alignment):
         super().add_sequence(name, sequence, seq_type, description=description)
 
     def __len__(self):
-        return int(len(self._aln_matrix.shape[-1]) / 3)
+        return int(self._aln_matrix.shape[-1] / 3)
 
     def __getitem__(self, i):
         if isinstance(i, int):  # self[0] returns the first alignment column
@@ -621,7 +649,7 @@ class CodonAlignment(Alignment):
             return self._aln_matrix[:, x:x+3]
         elif isinstance(i, slice):  # self[0:2] returns the first 2 columns
             start = i.start * 3
-            end = (i.stop * 3) + 3
+            end = i.stop * 3
             return self._aln_matrix[:, start:end]
         elif isinstance(i, str):  # self['test'] returns the sample's sequence
             if i in self._records_lookup_d.keys():

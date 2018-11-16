@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Data structure models for marker sequences in alignments.
 """
+from collections import Iterable
 import numpy as np
 
 
@@ -47,7 +48,7 @@ class Marker(object):
         # Encode sequences into a list of positions and its
         # corresponding characters.
         self._encode(marker_sequence)
-        # Check if the characters in the sequence are in the 
+        # Check if the characters in the sequence are in the
         # character descriptions.
         self.check_sequence(self._char_list, list(self.char_description.keys()))
 
@@ -70,8 +71,12 @@ class Marker(object):
         the marker is C. The encoding 0C10N11C20 is equal to
         CCCCCCCCCCNCCCCCCCCC
         """
-        return ''.join(zip(list(map(str, (i[0] for i in self._pos_list))),
-                           self._char_list)) + str(self._pos_list[-1][-1])
+        num_list = list(map(str, (tup[0] for tup in self._pos_list)))
+        combined_list = [None] * (len(num_list) + len(self._char_list))
+        combined_list[::2] = num_list
+        combined_list[1::2] = self._char_list
+        last = str(self._pos_list[-1][-1])
+        return ''.join(list(map(str, combined_list))) + last
 
     def coords(self, char, inverse=False, explicit=True):
         """Returns the all the positions of the target character, or the all the
@@ -106,10 +111,11 @@ class Marker(object):
                 if explicit:
                     coords_list += list(range(*pos_tup))
                 else:
-                    coords_list.append(pos_tup)
+                    coords_list.append(list(pos_tup))
         return coords_list
 
-    def filter(self, sequence, *exclude_chars):
+    def filter(self, sequence, *exclude_chars, inverse=False,
+               output_coords=False):
         """Filters out alignment columns based on the set of marker
         characters to be excluded.
 
@@ -120,6 +126,10 @@ class Marker(object):
         exclude_chars : list of str
             Marker characters to be excluded. The positions of these
             characters will indicate what sites to excluded in the output.
+        output_coords : bool, optional
+            Outputs the list of positions that passed the filter/s if True,
+            otherwise outputs the filtered sequence. By default, `output_coords`
+            is False.
 
         Returns
         -------
@@ -130,10 +140,14 @@ class Marker(object):
 
         """
         assert len(sequence) == len(self)
-        seq_array = np.array(sequence)
-        coords = sorted(
-            set([self.coords(c, inverse=True) for c in exclude_chars])
-        )
+        seq_array = np.array(list(sequence))
+        coords = []
+        for c in exclude_chars:
+            coords += self.coords(c, inverse=True if not inverse else False,
+                                  explicit=True)
+        coords = sorted(set(coords))
+        if output_coords:
+            return list(coords)
         return ''.join(seq_array[coords])
 
     def mask(self, sequence, *exclude_chars, mask_char='_'):
@@ -158,10 +172,11 @@ class Marker(object):
 
         """
         assert len(sequence) == len(self)
-        seq_array = np.array(sequence)
-        coords = sorted(
-            set([self.coords(c, inverse=False) for c in exclude_chars])
-        )
+        seq_array = np.array(list(sequence))
+        coords = []
+        for c in exclude_chars:
+            coords += self.coords(c, inverse=False, explicit=True)
+        coords = sorted(set(coords))
         seq_array[coords] = mask_char
         return ''.join(seq_array)
 
@@ -202,13 +217,11 @@ class Marker(object):
         """
         pos_list = []
         char_list = []
-        last = 0
         for i, c in enumerate(sequence):
             if not char_list or char_list[-1] != c:
                 pos_list.append(i)
                 char_list.append(c)
-                last = 1
-        pos_list.append(last+1)
+        pos_list.append(len(sequence))
         self._pos_list = tuple(
             (pos_list[i], pos_list[i+1]) for i in range(len(pos_list)-1)
         )
@@ -272,7 +285,7 @@ class ConsAlignMarker(Marker):
             input sequence.
 
         """
-        return self.filter(aligned_sequence, marker_char)
+        return self.filter(aligned_sequence, marker_char, inverse=True)
 
     def inconsistent_sites(self, aligned_sequence, marker_char='N'):
         """Returns the aligned sequence containing only the inconsistent sites
@@ -294,7 +307,7 @@ class ConsAlignMarker(Marker):
             input sequence.
 
         """
-        return self.filter(aligned_sequence, marker_char)
+        return self.filter(aligned_sequence, marker_char, inverse=True)
 
     def mask_consistent_sites(self, aligned_sequence,
                               marker_char='C', mask_char='_'):
