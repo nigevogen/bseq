@@ -36,6 +36,7 @@ class TestAlignmentEmpty:
         )
         assert len(self.aln.markers) == 1
         assert 'test_marker' in self.aln.markers.keys()
+        assert self.aln.markers['test_marker'].sequence == 'OOOXOOOOOOOOOOO'
 
 
 class TestAlignment:
