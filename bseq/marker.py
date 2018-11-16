@@ -114,7 +114,8 @@ class Marker(object):
                     coords_list.append(list(pos_tup))
         return coords_list
 
-    def filter(self, sequence, *exclude_chars, output_coords=False):
+    def filter(self, sequence, *exclude_chars, inverse=False,
+               output_coords=False):
         """Filters out alignment columns based on the set of marker
         characters to be excluded.
 
@@ -142,7 +143,8 @@ class Marker(object):
         seq_array = np.array(list(sequence))
         coords = []
         for c in exclude_chars:
-            coords += self.coords(c, inverse=True, explicit=True)
+            coords += self.coords(c, inverse=True if not inverse else False,
+                                  explicit=True)
         coords = sorted(set(coords))
         if output_coords:
             return list(coords)
@@ -283,7 +285,7 @@ class ConsAlignMarker(Marker):
             input sequence.
 
         """
-        return self.filter(aligned_sequence, marker_char)
+        return self.filter(aligned_sequence, marker_char, inverse=True)
 
     def inconsistent_sites(self, aligned_sequence, marker_char='N'):
         """Returns the aligned sequence containing only the inconsistent sites
@@ -305,7 +307,7 @@ class ConsAlignMarker(Marker):
             input sequence.
 
         """
-        return self.filter(aligned_sequence, marker_char)
+        return self.filter(aligned_sequence, marker_char, inverse=True)
 
     def mask_consistent_sites(self, aligned_sequence,
                               marker_char='C', mask_char='_'):
