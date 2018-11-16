@@ -23,3 +23,12 @@ class TestMarker:
         assert self.marker.coords('X', explicit=False) == [[3, 4], [10, 13]]
         assert self.marker.coords('O', explicit=False) == [[0, 3], [4, 10],
                                                            [13, 15]]
+
+    def test_filter(self):
+        sequence = 'ATTCAATATACCCAT'
+        assert self.marker.filter(sequence, 'X') == 'ATTAATATAAT'
+        assert self.marker.filter(sequence, 'O') == 'CCCC'
+        assert self.marker.filter(sequence, 'X', output_coords=True) == \
+            [0, 1, 2, 4, 5, 6, 7, 8, 9, 13, 14]
+        assert self.marker.filter(sequence, 'O', output_coords=True) == \
+            [3, 10, 11, 12]
