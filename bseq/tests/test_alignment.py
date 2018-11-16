@@ -2,7 +2,7 @@
 """Nose tests for Alignment and its subclasses.
 """
 from bseq.sequence import NuclSequence
-from bseq.alignment import Alignment
+from bseq.alignment import Alignment, CodonAlignment
 from bseq.marker import Marker
 import numpy as np
 
@@ -56,4 +56,25 @@ class TestAlignment:
         assert list(self.aln[0:1]) == list('AAAA')
         assert list(map(list, self.aln[0:2])) == [['A', 'T'], ['A', 'T'],
                                                   ['A', 'T'], ['A', 'T']]
+        assert list(self.aln['seq2']) == list('ATGTATGCATGCAAA')
+
+
+class TestCodonAlignment:
+    def setup(self):
+        self.aln = CodonAlignment('test')
+        self.aln.add_sequence('seq1', 'ATGCATGCATGCAAA', 'codon')
+        self.aln.add_sequence('seq2', 'ATGTATGCATGCAAA', 'codon')
+        self.aln.add_sequence('seq3', 'ATGCATGCATGCATA', 'codon')
+        self.aln.add_sequence('seq4', 'ATGCATGCATGCAAG', 'codon')
+
+    def test_len(self):
+        assert len(self.aln) == 5
+
+    def test_getitem(self):
+        assert list(map(lambda x: ''.join(x), self.aln[0])) == \
+        ['ATG', 'ATG', 'ATG', 'ATG']
+        assert list(map(lambda x: ''.join(x), self.aln[0:1]))  == \
+        ['ATG', 'ATG', 'ATG', 'ATG']
+        assert list(map(lambda x: ''.join(x), self.aln[0:2])) == \
+        ['ATGCAT', 'ATGTAT', 'ATGCAT', 'ATGCAT']
         assert list(self.aln['seq2']) == list('ATGTATGCATGCAAA')
