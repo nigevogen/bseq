@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Data structure models for marker sequences in alignments.
 """
+from collections import Iterable
 import numpy as np
 
 
@@ -47,7 +48,7 @@ class Marker(object):
         # Encode sequences into a list of positions and its
         # corresponding characters.
         self._encode(marker_sequence)
-        # Check if the characters in the sequence are in the 
+        # Check if the characters in the sequence are in the
         # character descriptions.
         self.check_sequence(self._char_list, list(self.char_description.keys()))
 
@@ -109,7 +110,7 @@ class Marker(object):
                     coords_list.append(pos_tup)
         return coords_list
 
-    def filter(self, sequence, *exclude_chars):
+    def filter(self, sequence, *exclude_chars, output_coords=False):
         """Filters out alignment columns based on the set of marker
         characters to be excluded.
 
@@ -120,6 +121,10 @@ class Marker(object):
         exclude_chars : list of str
             Marker characters to be excluded. The positions of these
             characters will indicate what sites to excluded in the output.
+        output_coords : bool, optional
+            Outputs the list of positions that passed the filter/s if True,
+            otherwise outputs the filtered sequence. By default, `output_coords`
+            is False.
 
         Returns
         -------
@@ -132,8 +137,11 @@ class Marker(object):
         assert len(sequence) == len(self)
         seq_array = np.array(sequence)
         coords = sorted(
-            set([self.coords(c, inverse=True) for c in exclude_chars])
+            set([self.coords(c, inverse=True, explicit=True)
+                 for c in exclude_chars])
         )
+        if output_coords:
+            return list(coords)
         return ''.join(seq_array[coords])
 
     def mask(self, sequence, *exclude_chars, mask_char='_'):
