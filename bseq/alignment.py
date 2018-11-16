@@ -641,7 +641,7 @@ class CodonAlignment(Alignment):
         super().add_sequence(name, sequence, seq_type, description=description)
 
     def __len__(self):
-        return int(len(self._aln_matrix.shape[-1]) / 3)
+        return int(self._aln_matrix.shape[-1] / 3)
 
     def __getitem__(self, i):
         if isinstance(i, int):  # self[0] returns the first alignment column
@@ -649,7 +649,7 @@ class CodonAlignment(Alignment):
             return self._aln_matrix[:, x:x+3]
         elif isinstance(i, slice):  # self[0:2] returns the first 2 columns
             start = i.start * 3
-            end = (i.stop * 3) + 3
+            end = i.stop * 3
             return self._aln_matrix[:, start:end]
         elif isinstance(i, str):  # self['test'] returns the sample's sequence
             if i in self._records_lookup_d.keys():
