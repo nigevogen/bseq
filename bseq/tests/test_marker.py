@@ -32,3 +32,10 @@ class TestMarker:
             [0, 1, 2, 4, 5, 6, 7, 8, 9, 13, 14]
         assert self.marker.filter(sequence, 'O', output_coords=True) == \
             [3, 10, 11, 12]
+
+    def test_mask(self):
+        sequence = 'ATTCAATATACCCAT'
+        assert self.marker.mask(sequence, 'X') == 'ATT_AATATA___AT'
+        assert self.marker.mask(sequence, 'O') == '___C______CCC__'
+        assert self.marker.mask(sequence, 'X', mask_char='.') == \
+        'ATT.AATATA...AT'
